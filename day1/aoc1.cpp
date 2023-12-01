@@ -68,6 +68,7 @@ void part2(){
         s+= stoi(firstDigit+lastDigit);
     }
     cout << s << endl;
+    file.close();
 }
 
 void part1(){
@@ -93,4 +94,5 @@ void part1(){
         s+= stoi(firstDigit+lastDigit);
     }
     cout << s << endl;
+    file.close();
 }

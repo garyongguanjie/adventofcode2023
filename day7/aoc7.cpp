@@ -6,12 +6,14 @@
 
 void part1();
 void part2();
+void part2Faster();
 
 using namespace std;
 using ll = long long;
 
 int main(){
     part2();
+    part2Faster();
 }
 
 struct Hb{
@@ -191,9 +193,98 @@ void part2(){
 
     sort(handbids.begin(),handbids.end(),compareHb2);
 
-    for(Hb hb:handbids){
-        cout << hb.hand << " " << hb.bid << endl;
+    // for(Hb hb:handbids){
+    //     cout << hb.hand << " " << hb.bid << endl;
+    // }
+    ll score = 0;
+    for (int i=0;i<handbids.size();i++){
+        score += handbids[i].bid*(i+1);
+        // cout << score << endl;
     }
+    cout << score << endl;
+}
+
+
+int getJtype2(string hand){
+    int countArray[13] = {0};
+    int jokerCount = 0;
+    for (char c:hand){
+        countArray[getValue(c)]++;
+        if (c=='J'){
+            jokerCount+=1;
+        }
+    }
+
+    // get two highest values
+    int a = 0;
+    countArray[9]=0;
+    int b = 0;
+
+    for (int i=0;i<13;i++){
+        int c = countArray[i];
+
+        if (c>a && c>b){
+            b = a;
+            a = c;
+        }else if (c>b){
+            b = c;
+        }
+    }
+
+    a += jokerCount;
+
+    if(a>=4){
+        return a+1;
+    }else if (a==3){
+        return b+2;
+    }else if (a==2){
+        return b;
+    }else{
+        return 0;
+    }
+}
+
+bool compareHb3(const Hb& a, const Hb& b){
+
+    int atype = max(getType(a.hand),getJtype2(a.hand));
+    int btype = max(getType(b.hand),getJtype2(b.hand));
+
+
+    if (atype!=btype){
+        return atype<btype;
+    }
+    for(int i=0;i<5;i++){
+        char ca = a.hand[i];
+        char cb = b.hand[i];
+        
+        int va = getValue2(ca);
+        int vb = getValue2(cb);
+
+        if (va!=vb){
+            return va<vb;
+        }
+    }
+    return true;
+}
+
+void part2Faster(){
+    fstream file("aoc7.txt");
+    string line;
+
+    vector<Hb> handbids;
+
+    while (getline(file,line)){
+        std::istringstream iss(line);
+        Hb hb;
+        iss >> hb.hand >> hb.bid;
+        handbids.push_back(hb);
+    }
+
+    sort(handbids.begin(),handbids.end(),compareHb3);
+
+    // for(Hb hb:handbids){
+    //     cout << hb.hand << " " << hb.bid << endl;
+    // }
     ll score = 0;
     for (int i=0;i<handbids.size();i++){
         score += handbids[i].bid*(i+1);
